@@ -1,0 +1,182 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <title></title>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0">
+
+        <link type="text/css" rel="stylesheet" href="./css/application.css">
+
+        <link type="text/css" rel="stylesheet" href="./jquery/contextmenu.css">
+        <link type="text/css" rel="stylesheet" href="./jquery/jquery-ui-1.8.23.custom.css">
+
+        <script src="./draw2d/shifty.js"></script>
+        <script src="./draw2d/raphael.js"></script>
+        <script src="./jquery/jquery-1.12.0.min.js"></script>
+        <script src="./jquery/jquery.autoresize.js"></script>
+        <script src="./jquery/jquery-touch_punch.js"></script>
+        <script src="./jquery/jquery.contextmenu.js"></script>
+        <script src="./draw2d/rgbcolor.js"></script>
+        <script src="./draw2d/canvg.js"></script>
+        <script src="./draw2d/Class.js"></script>
+        <script src="./draw2d/json2.js"></script>
+        <script src="./draw2d/pathfinding-browser.min.js"></script>
+
+
+        <script src="./draw2d/draw2d.js"></script>
+
+        <script src="./jquery/jquery.browser.js"></script>
+        <script src="./jquery/jquery-ui-1.8.23.custom.min.js"></script>
+
+        <script src="./dbModel/Application.js"></script>
+        <script src="./dbModel/View.js"></script>
+        <script src="./dbModel/Toolbar.js"></script>
+        <script src="./dbModel/TableEditor.js"></script>
+        <script src="./dbModel/TableShape.js"></script>
+
+        <script src="./dbModel/draw2dTojson.js"></script>
+        <script src="./dbModel/document.js"></script>
+
+        <style>
+         .draw2d_InputPort{
+             fill:#F7F7F7;
+             stroke:#d7d7d7;
+         }
+         .draw2d_OutputPort{
+             fill:#F7F7F7;
+             stroke:#d7d7d7;
+         }
+         .ui-dialog{
+             font-size: 14px;
+         }
+
+         #dialog label{
+             width: 25%;
+             display: inline-block;
+         }
+         input.text {
+             width: 60%;
+             padding: .4em;
+         }
+         select{
+             padding: .4em;
+         }
+         .ui-widget-content{
+             margin-bottom: 15px;
+         }
+         .d-save{
+             position: absolute;
+             bottom: 5px;
+             left: 30px;
+             cursor: pointer;
+         }
+         .d-save:active{
+             background-color: #cccccc;
+         }
+        </style>
+        <script type="text/javascript">
+
+         /**
+          * @method
+          * Factory method to provide a default connection for all drag&drop connections. You
+          * can override this method and customize this for your personal purpose.
+          *
+          * @param {draw2d.Port} sourcePort port of the source of the connection
+          * @param {draw2d.Port} targetPort port of the target of the connection
+          * @template
+          * @returns {draw2d.Connection}
+          */
+
+         $(function () {
+
+             var routerToUse = new draw2d.layout.connection.InteractiveManhattanConnectionRouter();
+             var app  = new example.Application();
+             app.view.installEditPolicy(  new draw2d.policy.connection.DragConnectionCreatePolicy({
+                 createConnection: function(){
+                     var connection = new draw2d.Connection({
+                         stroke: 2,
+                         outlineStroke: 1,
+                         outlineColor: "#ffffff",
+                         color: "#4caf50",
+                         router: routerToUse
+                     });
+                     return connection;
+                 }
+             }));
+
+             // unmarshal the JSON document into the canvas
+             // (load)
+             var reader = new draw2d.io.json.Reader();
+             reader.unmarshal(app.view, jsonDocument);
+
+             $('.d-save').click(function(){
+                 var writer = new example.jsonWriter();
+                 writer.marshal(app.view, function(json){
+                     // convert the json object into string representation
+                     console.log(json)
+
+                 });
+             });
+
+         });
+
+
+        </script>
+
+    </head>
+
+    <body id="container" class="" style="cursor: auto; z-index: 0;">
+
+        <div id="toolbar" class="navbar-default">
+
+        </div>
+
+        <div id="side-nav">
+            <span id="logo">Designer</span>
+            <div id="layer_elements"></div>
+            <div id="layer_header" class="highlight panetitle blackgradient">
+                <div data-shape="TableShape" class="palette_node_element draw2d_droppable ui-draggable" title="drag&amp;drop the table into the canvas.." style="z-index: 1;">Table</div>
+                <div class="palette_node_element d-save">
+                    save
+                </div>
+            </div>
+        </div>
+
+        <div id="canvas" class="ui-droppable">
+        </div>
+
+        <div id="dialog" title="表信息">
+            <div>
+                <div>
+                    <label>name:</label>
+                    <input type="text" id="tName" class="text ui-widget-content ui-corner-all">
+                </div>
+                <div>
+                    <label>type:</label>
+                    <select id="tType" class="ui-widget-content ui-corner-all"><option value="varchar">varchar</option><option value="int">int</option><option value="char">char</option><option value="date">date</option><option value="datetime">datetime</option><option value="text">text</option></select>
+                </div>
+                <div>
+                    <label>length:</label>
+                    <input type="number" min="0" id="tLength" class="text ui-widget-content ui-corner-all">
+                </div>
+                <div>
+                    <label>default:</label>
+                    <input type="text" id="tDefault" class="text ui-widget-content ui-corner-all">
+                </div>
+                <div>
+                    <label>canNull:</label>
+                    <input type="checkbox" id="tCanNull" class="ui-widget-content ui-corner-all">
+                </div>
+                <div>
+                    <label>pk:</label>
+                    <input type="checkbox" id="tPk" class="ui-widget-content ui-corner-all">
+                </div>
+                <div>
+                    <label>auto_inc:</label>
+                    <input type="checkbox" id="tAutoInc" class="ui-widget-content ui-corner-all">
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
