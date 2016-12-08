@@ -159,3 +159,13 @@ button.gray,a.gray,input[type=submit].gray {
 	color: #888 !important;
 	opacity: 0.8;
 }
+
+#canvasInfo{
+    position: absolute;
+    top: 70px;
+    right: 25px;
+    width: 220px;
+    max-height: 400px;
+    overflow-y: auto;
+    font-size: 14px;
+}

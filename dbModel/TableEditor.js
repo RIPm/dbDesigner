@@ -33,9 +33,9 @@ TableEditor = draw2d.ui.LabelEditor.extend({
                 "确认": function(){
                     _this.label
                         .set('text', view.nameDom.val())
-                        .set('pk', view.pkDom.val() ? true : false)
-                        .set('null', view.canNullDom.val() ? true : false)
-                        .set('auto_inc', view.autoIncDom.val() ? true : false)
+                        .set('pk', view.pkDom.is(':checked'))
+                        .set('null', view.canNullDom.is(':checked'))
+                        .set('auto_inc', view.autoIncDom.is(':checked'))
                         .set('type', view.typeDom.val())
                         .set('max_length', view.lengthDom.val())
                         .set('default', view.defaultDom.val())

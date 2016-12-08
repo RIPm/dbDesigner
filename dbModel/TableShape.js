@@ -4,8 +4,8 @@ TableShape = draw2d.shape.layout.VerticalLayout.extend({
 
     init : function(attr)
     {
+        var _this = this;
         this._super($.extend({bgColor:"#dbddde", color:"#d7d7d7", stroke:1, radius:3},attr));
-
 
         this.classLabel = new draw2d.shape.basic.Label({
             text:"ClassName",
@@ -15,7 +15,12 @@ TableShape = draw2d.shape.layout.VerticalLayout.extend({
             radius: this.getRadius(),
             padding:10,
             resizeable:true,
-            editor:new draw2d.ui.LabelInplaceEditor()
+            editor:new draw2d.ui.LabelInplaceEditor({
+                onCommit: function(){
+                    // 更新数据显示
+                    _this.onSelection();
+                }
+            })
         });
 
         this.add(this.classLabel);
@@ -119,6 +124,7 @@ TableShape = draw2d.shape.layout.VerticalLayout.extend({
                     // with undo/redo support
                     var cmd = new draw2d.command.CommandDelete(emitter);
                     emitter.getCanvas().getCommandStack().execute(cmd);
+                    _table.onSelection();
                 default:
                     break;
                 }
@@ -177,7 +183,8 @@ TableShape = draw2d.shape.layout.VerticalLayout.extend({
                 list.push(figure.getAttr())
             }
         });
-        console.log(JSON.stringify(list, null, '\t'));
+        $('#canvasInfo').html(this.classLabel.getText()+"表：<br><br>"+JSON.stringify(list, null, '<br>'));
+        // console.log(JSON.stringify(list, null, '\t'));
     },
 
     /**
